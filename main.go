@@ -44,30 +44,29 @@ func main() {
 	{
 		auth := api.Group("/auth")
 		{
-			auth.POST("/register", ctrl.Register)
-			auth.POST("/login", ctrl.Login)
-			auth.POST("/logout", ctrl.Logout)
+			auth.POST("/login", ctrl.Login)       // API 1
+			auth.POST("/register", ctrl.Register) // API 2
+			auth.POST("/logout", ctrl.Logout)     // API 3
 		}
 
 		image := api.Group("/image")
 		{
-			image.POST("/upload", ctrl.PostImage)
-			image.DELETE("/:image_id", ctrl.DeleteImage)
-			image.PUT("/:image_id", ctrl.PutImage)
-			image.GET("/:image_id", ctrl.GetImage)
+			image.GET("/search", ctrl.Search)            // API 4
+			image.POST("/upload", ctrl.PostImage)        // API 7
+			image.PUT("/:image_id", ctrl.PutImage)       // API 8
+			image.GET("/:image_id", ctrl.GetImage)       // API 9
+			image.DELETE("/:image_id", ctrl.DeleteImage) // API 10
 
-			image.POST("/:image_id/comment", ctrl.PostComment)
-			image.DELETE("/:image_id/comment/:comment_id", ctrl.DeleteComment)
-			image.GET("/:image_id/comment", ctrl.GetImageComments)
+			image.GET("/:image_id/comment", ctrl.GetImageComments)                // API 11
+			image.POST("/:image_id/comment", ctrl.PostComment)                    // API 12
+			image.POST("/:image_id/comment/:comment_id/reply", ctrl.ReplyComment) // API 13
+			image.DELETE("/:image_id/comment/:comment_id", ctrl.DeleteComment)    // API 14
 
-			image.POST("/:image_id/comment/:comment_id/reply", ctrl.ReplyComment)
-
-			image.GET("/search", ctrl.Search)
 		}
 
 		user := api.Group("/user")
 		{
-			user.GET("/:user_id/image", ctrl.GetUserImages)
+			user.GET("/:user_id/image", ctrl.GetUserImages) // API 6
 		}
 	}
 
