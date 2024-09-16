@@ -37,7 +37,7 @@ func ReadAll(client *mongo.Client, dbName string, collectionName string, filter 
 	findOptions := options.Find()
 	if len(opts) > 0 {
 		if opts[0].Limit > 0 {
-			findOptions.SetLimit(opts[0].Limit)
+			findOptions.Limit = &opts[0].Limit
 		}
 		if len(opts[0].Sort) > 0 {
 			findOptions.SetSort(opts[0].Sort)
