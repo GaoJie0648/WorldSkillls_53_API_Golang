@@ -194,7 +194,11 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	order_type := map[string]int{
 		"asc":  1,
 		"desc": -1,
-	}[c.Query("order_type")]
+	}[c.PostForm("order_type")]
+	if order_type == 0 {
+		order_type = -1
+	}
+
 	order_by_map := map[string]string{
 		"created_at": "created_at",
 		"updated_at": "updated_at",
@@ -203,19 +207,19 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	}
 
 	var order_by string
-	if order_by_map[c.Query("order_by")] == "" {
+	if order_by_map[c.PostForm("order_by")] == "" {
 		order_by = "created_at"
 	} else {
-		order_by = order_by_map[c.Query("order_by")]
+		order_by = order_by_map[c.PostForm("order_by")]
 	}
 
 	var page int
-	if page = utils.String2Int(c.Query("page")); page == 0 {
+	if page = utils.String2Int(c.PostForm("page")); page == 0 {
 		page = 1
 	}
 
 	var page_size int
-	if page_size := utils.String2Int(c.Query("page_size")); page_size == 0 {
+	if page_size := utils.String2Int(c.PostForm("page_size")); page_size == 0 {
 		page_size = 10
 	}
 
@@ -223,8 +227,8 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		"deleted_at": "",
 	}
 
-	if keyword := c.Query("keywords"); keyword != "" {
-		regex := bson.M{"$regex": ".*" + c.Query("keywords") + ".*"}
+	if keyword := c.PostForm("keywords"); keyword != "" {
+		regex := bson.M{"$regex": ".*" + c.PostForm("keywords") + ".*"}
 		filter["$or"] = []bson.M{
 			{"title": regex},
 			{"description": regex},
