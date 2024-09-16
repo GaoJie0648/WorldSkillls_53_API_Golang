@@ -170,7 +170,7 @@ func (ctrl *Controller) GetUserImages(c *gin.Context) {
 		return
 	}
 
-	images := utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user_id, "deleted_at": ""})
+	images := utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user_id, "deleted_at": ""}, nil)
 	images_data := []map[string]interface{}{}
 
 	for _, image := range images {

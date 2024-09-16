@@ -15,7 +15,7 @@ func ImageDetailResource(c *gin.Context, data *map[string]interface{}, client *m
 	UserResource(c, &user)
 
 	// 取得圖片評論數
-	comment_count := utils.ReadAll(client, "worldskills", "comments", bson.M{"image_id": tmp["_id"]})
+	comment_count := utils.ReadAll(client, "worldskills", "comments", bson.M{"image_id": tmp["_id"]}, nil)
 
 	response := map[string]interface{}{
 		"id":            tmp["_id"],

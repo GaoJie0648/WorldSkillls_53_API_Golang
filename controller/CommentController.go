@@ -119,7 +119,7 @@ func (ctrl *Controller) GetImageComments(c *gin.Context) {
 	}
 
 	// 取得評論
-	comments := utils.ReadAll(ctrl.Client, "worldskills", "comments", bson.M{"image_id": image_id})
+	comments := utils.ReadAll(ctrl.Client, "worldskills", "comments", bson.M{"image_id": image_id}, nil)
 	comments_data := []map[string]interface{}{}
 	for _, comment := range comments {
 		resource.CommentResource(c, &comment, ctrl.Client)

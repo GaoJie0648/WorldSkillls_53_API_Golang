@@ -15,7 +15,7 @@ func CommentResource(c *gin.Context, data *map[string]interface{}, client *mongo
 	UserResource(c, &user)
 
 	// 取得評論回覆數
-	replys := utils.ReadAll(client, "worldskills", "comments", bson.M{"reply_id": tmp["_id"]})
+	replys := utils.ReadAll(client, "worldskills", "comments", bson.M{"reply_id": tmp["_id"]}, nil)
 	comments := []map[string]interface{}{}
 	for _, reply := range replys {
 		CommentResource(c, &reply, client)

@@ -32,18 +32,9 @@ func Read(client *mongo.Client, dbName string, collectionName string, filter bso
 	return result
 }
 
-func ReadAll(client *mongo.Client, dbName string, collectionName string, filter bson.M, opts ...ReadAllOptions) []map[string]interface{} {
+func ReadAll(client *mongo.Client, dbName string, collectionName string, filter bson.M, options *options.FindOptions) []map[string]interface{} {
 	collection := client.Database(dbName).Collection(collectionName)
-	findOptions := options.Find()
-	if len(opts) > 0 {
-		if opts[0].Limit > 0 {
-			findOptions.Limit = &opts[0].Limit
-		}
-		if len(opts[0].Sort) > 0 {
-			findOptions.SetSort(opts[0].Sort)
-		}
-	}
-	cursor, err := collection.Find(context.TODO(), filter, findOptions)
+	cursor, err := collection.Find(context.TODO(), filter, options)
 	if err != nil {
 		return nil
 	}

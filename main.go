@@ -52,6 +52,7 @@ func main() {
 		image := api.Group("/image")
 		{
 			image.GET("/search", ctrl.Search)            // API 4
+			image.GET("/popular", ctrl.GetPopularImages) // API 5
 			image.POST("/upload", ctrl.PostImage)        // API 7
 			image.PUT("/:image_id", ctrl.PutImage)       // API 8
 			image.GET("/:image_id", ctrl.GetImage)       // API 9
