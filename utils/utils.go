@@ -19,13 +19,11 @@ func ImgSize(file *multipart.FileHeader) (width int, height int, err error) {
 	}
 	defer src.Close()
 
-	// 解碼圖像
 	img, _, err := image.Decode(src)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	// 獲取圖像的寬度和高度
 	w := img.Bounds().Dx()
 	h := img.Bounds().Dy()
 
