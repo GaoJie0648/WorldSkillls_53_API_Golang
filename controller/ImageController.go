@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"log"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 	"worldskills/models"
@@ -101,7 +101,6 @@ func (ctrl *Controller) DeleteImage(c *gin.Context) {
 
 	// 檢查圖片是否存在
 	image_id, _ := primitive.ObjectIDFromHex(c.Param("image_id"))
-	log.Println(image_id)
 	image := utils.Read(ctrl.Client, "worldskills", "images", bson.M{"_id": image_id})
 	if image == nil || image["deleted_at"] != "" {
 		response.Bad(c, "MSG_IMAGE_NOT_EXISTS")
@@ -189,9 +188,14 @@ func (ctrl *Controller) GetImage(c *gin.Context) {
 }
 
 func (ctrl *Controller) GetPopularImages(c *gin.Context) {
+	limitStr := c.PostForm("limit")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
 	opts := utils.ReadAllOptions{
-		Limit: 10,
-		Sort:  bson.D{{"view_count", -1}},
+		Limit: int64(limit),
+		Sort:  bson.D{{Key: "view_count", Value: -1}},
 	}
 	filiter := bson.M{"deleted_at": ""}
 	images := utils.ReadAll(ctrl.Client, "worldskills", "images", filiter, opts)
