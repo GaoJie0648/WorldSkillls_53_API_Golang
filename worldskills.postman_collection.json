@@ -1,0 +1,473 @@
+{
+	"info": {
+		"_postman_id": "13bd4773-1e3b-461c-a2ea-056c649a743f",
+		"name": "worldskills",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20986560"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@web.tw",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "adminpass",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@web.tw",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "adminpass",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/logout",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@web.tw",
+							"type": "text"
+						},
+						{
+							"key": "nickname",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "adminpass",
+							"type": "text"
+						},
+						{
+							"key": "profile_image",
+							"type": "file",
+							"src": "/F:/GaoJie/Pictures/220d220bb4fe9189281b91b37e1e36f2.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/register",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostImage",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "new",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "one",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/F:/GaoJie/Pictures/0GrKT8X.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/image/upload",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteImage",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/image/66e6f639fdfd9c08e685ff81",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6f639fdfd9c08e685ff81"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateImage",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "LOL",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "asd",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6f81eb8ca8a49257747a6",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6f81eb8ca8a49257747a6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetImage",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6fc27b6d64c822716e7fb",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6fc27b6d64c822716e7fb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostComment",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \":D\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6fc27b6d64c822716e7fb/comment",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6fc27b6d64c822716e7fb",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteComment",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "new",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "one",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/F:/GaoJie/Pictures/0GrKT8X.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6fc27b6d64c822716e7fb/comment/66e709cfae04c1e70f5908e8",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6fc27b6d64c822716e7fb",
+						"comment",
+						"66e709cfae04c1e70f5908e8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetImageComments",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6fc27b6d64c822716e7fb/comment",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6fc27b6d64c822716e7fb",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserImages",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{host}}/api/user/66e60ae8b62902f77f55ae0f/image",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"66e60ae8b62902f77f55ae0f",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostComment Copy",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "291124ddb96730a006d48d4b74fa37f3a1e040dffbe2549b3e0778e7bbf51eb2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \":D\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/image/66e6fc27b6d64c822716e7fb/comment",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"image",
+						"66e6fc27b6d64c822716e7fb",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost:8080",
+			"type": "string"
+		}
+	]
+}
