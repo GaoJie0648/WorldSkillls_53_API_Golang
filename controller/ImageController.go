@@ -191,6 +191,7 @@ func (ctrl *Controller) GetImage(c *gin.Context) {
 
 // 搜尋圖片
 func (ctrl *Controller) Search(c *gin.Context) {
+	// order_type: 1 -> asc, -1 -> desc
 	order_type := map[string]int{
 		"asc":  1,
 		"desc": -1,
@@ -199,6 +200,7 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		order_type = -1
 	}
 
+	// order_by: created_at, updated_at, width, height
 	order_by_map := map[string]string{
 		"created_at": "created_at",
 		"updated_at": "updated_at",
@@ -213,20 +215,22 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		order_by = order_by_map[c.PostForm("order_by")]
 	}
 
+	// page, page_size
 	var page int
+	var page_size int
 	if page = utils.String2Int(c.PostForm("page")); page == 0 {
 		page = 1
 	}
-
-	var page_size int
 	if page_size := utils.String2Int(c.PostForm("page_size")); page_size == 0 {
 		page_size = 10
 	}
 
+	// 建立搜尋條件
 	filter := bson.M{
 		"deleted_at": "",
 	}
 
+	// 關鍵字搜尋(如果有)
 	if keyword := c.PostForm("keywords"); keyword != "" {
 		regex := bson.M{"$regex": ".*" + c.PostForm("keywords") + ".*"}
 		filter["$or"] = []bson.M{
@@ -235,6 +239,7 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		}
 	}
 
+	// 搜尋圖片
 	collection := ctrl.Client.Database("worldskills").Collection("images")
 	collection.Find(context.TODO(), filter)
 	findOptions := options.Find()
@@ -246,6 +251,8 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// 解碼結果
 	var results []map[string]interface{}
 	for cursor.Next(context.Background()) {
 		var result map[string]interface{}
@@ -253,13 +260,9 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		resource.ImageResource(c, &result)
 		results = append(results, result)
 	}
-	var results_data []map[string]interface{}
-	for _, result := range results {
-		resource.ImageResource(c, &result)
-		results_data = append(results_data, result)
-	}
 
-	response.Ok(c, results_data)
+	response.Ok(c, results)
 }
