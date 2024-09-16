@@ -187,3 +187,18 @@ func (ctrl *Controller) GetImage(c *gin.Context) {
 	resource.ImageDetailResource(c, &data, ctrl.Client)
 	response.Ok(c, data)
 }
+
+func (ctrl *Controller) GetPopularImages(c *gin.Context) {
+	opts := utils.ReadAllOptions{
+		Limit: 10,
+		Sort:  bson.D{{"view_count", -1}},
+	}
+	filiter := bson.M{"deleted_at": ""}
+	images := utils.ReadAll(ctrl.Client, "worldskills", "images", filiter, opts)
+	images_map := []map[string]interface{}{}
+	for _, image := range images {
+		resource.ImageResource(c, &image)
+		images_map = append(images_map, image)
+	}
+	response.Ok(c, images_map)
+}
