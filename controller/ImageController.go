@@ -246,7 +246,8 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	findOptions.SetSort(bson.D{{Key: order_by, Value: order_type}})
 	findOptions.SetSkip(int64((page - 1) * page_size))
 	limit := int64(page_size)
-	findOptions.Limit = &limit
+	limit64 := int64(limit)
+	findOptions.Limit = &limit64
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -268,14 +269,14 @@ func (ctrl *Controller) Search(c *gin.Context) {
 }
 
 func (ctrl *Controller) GetPopularImages(c *gin.Context) {
-	// page, page_size
-	var page int
-	var page_size int
-	if page = utils.String2Int(c.PostForm("page")); page == 0 {
-		page = 1
+	var limit = utils.String2Int(c.Query("limit"))
+	if limit < 0 || limit > 100 {
+		response.Bad(c, "MSG_WRONG_DATA_TYPE")
+		return
 	}
-	if page_size := utils.String2Int(c.PostForm("page_size")); page_size == 0 {
-		page_size = 10
+
+	if limit == 0 {
+		limit = 10
 	}
 
 	// 建立搜尋條件
@@ -283,30 +284,13 @@ func (ctrl *Controller) GetPopularImages(c *gin.Context) {
 		"deleted_at": "",
 	}
 
-	// 搜尋圖片
-	collection := ctrl.Client.Database("worldskills").Collection("images")
-	collection.Find(context.TODO(), filter)
+	// 限制搜尋筆數
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{Key: "view_count", Value: -1}})
-	findOptions.SetSkip(int64((page - 1) * page_size))
-	limit := int64(page_size)
-	findOptions.Limit = &limit
-	cursor, err := collection.Find(context.TODO(), filter, findOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
+	limit64 := int64(limit)
+	findOptions.Limit = &limit64
 
-	// 解碼結果
-	var results []map[string]interface{}
-	for cursor.Next(context.Background()) {
-		var result map[string]interface{}
-		err := cursor.Decode(&result)
-		if err != nil {
-			log.Fatal(err)
-		}
-		resource.ImageResource(c, &result)
-		results = append(results, result)
-	}
+	// 搜尋圖片
+	results := utils.ReadAll(ctrl.Client, "worldskills", "images", filter, findOptions)
 
 	response.Ok(c, results)
 }
