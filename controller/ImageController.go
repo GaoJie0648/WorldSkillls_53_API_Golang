@@ -209,9 +209,6 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		order_by = order_by_map[c.Query("order_by")]
 	}
 
-	if keywords := c.Query("keywords"); keywords != "" {
-	}
-
 	var page int
 	if page = utils.String2Int(c.Query("page")); page == 0 {
 		page = 1
@@ -222,12 +219,16 @@ func (ctrl *Controller) Search(c *gin.Context) {
 		page_size = 10
 	}
 
-	regex := bson.M{"$regex": ".*" + c.Query("keywords") + ".*"}
 	filter := bson.M{
-		"$or": []bson.M{
+		"deleted_at": "",
+	}
+
+	if keyword := c.Query("keywords"); keyword != "" {
+		regex := bson.M{"$regex": ".*" + c.Query("keywords") + ".*"}
+		filter["$or"] = []bson.M{
 			{"title": regex},
 			{"description": regex},
-		},
+		}
 	}
 
 	collection := ctrl.Client.Database("worldskills").Collection("images")
