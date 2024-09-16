@@ -1,8 +1,9 @@
 package controller
 
 import (
+	"context"
+	"log"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 	"worldskills/models"
@@ -13,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var image_type_map = map[string]string{
@@ -187,22 +189,71 @@ func (ctrl *Controller) GetImage(c *gin.Context) {
 	response.Ok(c, data)
 }
 
-func (ctrl *Controller) GetPopularImages(c *gin.Context) {
-	limitStr := c.PostForm("limit")
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil || limit <= 0 {
-		limit = 10
+func (ctrl *Controller) Search(c *gin.Context) {
+	order_type := map[string]int{
+		"asc":  1,
+		"desc": -1,
+	}[c.Query("order_type")]
+	order_by_map := map[string]string{
+		"created_at": "created_at",
+		"updated_at": "updated_at",
+		"width":      "width",
+		"height":     "height",
 	}
-	opts := utils.ReadAllOptions{
-		Limit: int64(limit),
-		Sort:  bson.D{{Key: "view_count", Value: -1}},
+
+	var order_by string
+	if order_by_map[c.Query("order_by")] == "" {
+		order_by = "created_at"
+	} else {
+		order_by = order_by_map[c.Query("order_by")]
 	}
-	filiter := bson.M{"deleted_at": ""}
-	images := utils.ReadAll(ctrl.Client, "worldskills", "images", filiter, opts)
-	images_map := []map[string]interface{}{}
-	for _, image := range images {
-		resource.ImageResource(c, &image)
-		images_map = append(images_map, image)
+
+	if keywords := c.Query("keywords"); keywords != "" {
 	}
-	response.Ok(c, images_map)
+
+	var page int
+	if page = utils.String2Int(c.Query("page")); page == 0 {
+		page = 1
+	}
+
+	var page_size int
+	if page_size := utils.String2Int(c.Query("page_size")); page_size == 0 {
+		page_size = 10
+	}
+
+	regex := bson.M{"$regex": ".*" + c.Query("keywords") + ".*"}
+	filter := bson.M{
+		"$or": []bson.M{
+			{"title": regex},
+			{"description": regex},
+		},
+	}
+
+	collection := ctrl.Client.Database("worldskills").Collection("images")
+	collection.Find(context.TODO(), filter)
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: order_by, Value: order_type}})
+	findOptions.SetSkip(int64((page - 1) * page_size))
+	limit := int64(page_size)
+	findOptions.Limit = &limit
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var results []map[string]interface{}
+	for cursor.Next(context.Background()) {
+		var result map[string]interface{}
+		err := cursor.Decode(&result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		results = append(results, result)
+	}
+	var results_data []map[string]interface{}
+	for _, result := range results {
+		resource.ImageResource(c, &result)
+		results_data = append(results_data, result)
+	}
+
+	response.Ok(c, results_data)
 }

@@ -62,7 +62,7 @@ func main() {
 
 			image.POST("/:image_id/comment/:comment_id/reply", ctrl.ReplyComment)
 
-			image.GET("popular", ctrl.GetPopularImages)
+			image.GET("/search", ctrl.Search)
 		}
 
 		user := api.Group("/user")

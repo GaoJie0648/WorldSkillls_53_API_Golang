@@ -5,6 +5,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"mime/multipart"
+	"strconv"
 	"time"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -58,4 +59,12 @@ func HasKey(c *gin.Context, key []string) bool {
 
 func GetNowTime() string {
 	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+func String2Int(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil || i <= 0 {
+		i = 10
+	}
+	return int(i)
 }

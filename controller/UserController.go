@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 	"worldskills/models"
@@ -178,4 +179,12 @@ func (ctrl *Controller) GetUserImages(c *gin.Context) {
 	}
 
 	response.Ok(c, images_data)
+}
+
+func (ctrl *Controller) GetPopularUsers(c *gin.Context) {
+	limitStr := c.PostForm("limit")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
 }
