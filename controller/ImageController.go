@@ -189,6 +189,7 @@ func (ctrl *Controller) GetImage(c *gin.Context) {
 	response.Ok(c, data)
 }
 
+// 搜尋圖片
 func (ctrl *Controller) Search(c *gin.Context) {
 	order_type := map[string]int{
 		"asc":  1,

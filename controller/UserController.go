@@ -181,6 +181,7 @@ func (ctrl *Controller) GetUserImages(c *gin.Context) {
 	response.Ok(c, images_data)
 }
 
+// 取得受歡迎的使用者
 func (ctrl *Controller) GetPopularUsers(c *gin.Context) {
 	limitStr := c.PostForm("limit")
 	limit, err := strconv.Atoi(limitStr)
