@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"encoding/json"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"io"
 	"mime/multipart"
 	"strconv"
 	"time"
@@ -53,6 +55,13 @@ func HasKey(c *gin.Context, key []string) bool {
 		}
 	}
 	return true
+}
+
+func GetRequestData(c *gin.Context) map[string]interface{} {
+	body, _ := io.ReadAll(c.Request.Body)
+	var bodyMap map[string]interface{}
+	json.Unmarshal(body, &bodyMap)
+	return bodyMap
 }
 
 func GetNowTime() string {
