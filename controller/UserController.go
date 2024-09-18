@@ -54,7 +54,7 @@ func (ctrl *Controller) Login(c *gin.Context) {
 	hasher.Write([]byte(user_data["email"].(string)))
 	user_data["access_token"] = hex.EncodeToString(hasher.Sum(nil))
 	// 更新使用者資料
-	utils.Update(ctrl.Client, "worldskills", "users", bson.M{"email": c.PostForm("email")}, bson.M{"$set": bson.M{"access_token": user_data["access_token"]}})
+	utils.Update(ctrl.Client, "worldskills", "users", bson.M{"email": request["email"]}, bson.M{"$set": bson.M{"access_token": user_data["access_token"]}})
 
 	resource.UserResource(c, &user_data)
 	response.Ok(c, user_data)
