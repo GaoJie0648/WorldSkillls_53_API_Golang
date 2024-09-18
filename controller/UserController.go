@@ -28,20 +28,23 @@ var user_type_map = map[string]string{
 func (ctrl *Controller) Login(c *gin.Context) {
 	// 檢查是否有缺少的欄位
 	var check_keys = []string{"email", "password"}
-	if !utils.HasKey(c, check_keys) {
-		response.Bad(c, "MSG_MISSING_FIELD")
-		return
+	request := utils.GetRequestData(c)
+	for _, key := range check_keys {
+		if request[key] == nil {
+			response.Bad(c, "MSG_MISSING_FIELD")
+			return
+		}
 	}
 
 	// 檢查使用者是否存在
-	var user_data = utils.Read(ctrl.Client, "worldskills", "users", bson.M{"email": c.PostForm("email")})
+	var user_data = utils.Read(ctrl.Client, "worldskills", "users", bson.M{"email": request["email"]})
 	if user_data == nil {
 		response.Bad(c, "MSG_USER_NOT_EXISTS")
 		return
 	}
 
 	// 檢查密碼是否正確
-	if err := bcrypt.CompareHashAndPassword([]byte(user_data["password"].(string)), []byte(c.PostForm("password"))); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user_data["password"].(string)), []byte(request["password"].(string))); err != nil {
 		response.Bad(c, "MSG_INVALID_LOGIN")
 		return
 	}
