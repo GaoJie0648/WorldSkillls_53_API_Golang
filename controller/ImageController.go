@@ -243,6 +243,8 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	// 搜尋圖片
 	collection := ctrl.Client.Database("worldskills").Collection("images")
 	collection.Find(context.TODO(), filter)
+
+	// 查詢的Options
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: order_by, Value: order_type}})
 	findOptions.SetSkip(int64((page - 1) * page_size))
