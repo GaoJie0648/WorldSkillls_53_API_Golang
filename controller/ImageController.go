@@ -269,6 +269,7 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	response.Ok(c, results)
 }
 
+// 取得受歡迎的圖片
 func (ctrl *Controller) GetPopularImages(c *gin.Context) {
 	var limit = utils.String2Int(c.Query("limit"))
 	if limit < 0 || limit > 100 {
