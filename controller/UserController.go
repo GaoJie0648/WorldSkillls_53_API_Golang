@@ -189,9 +189,15 @@ func (ctrl *Controller) GetUserImages(c *gin.Context) {
 func (ctrl *Controller) GetPopularUsers(c *gin.Context) {
 	users := utils.ReadAll(ctrl.Client, "worldskills", "users", bson.M{}, nil)
 	for _, user := range users {
-		user["image_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user["_id"], "deleted_at": ""}, nil))
+		images := utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user["_id"], "deleted_at": ""}, nil)
+		user["image_count"] = len(images)
 		user["upload_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user["_id"], "deleted_at": "", "updated_at": bson.M{"$ne": ""}}, nil))
-		user["total_comment_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "comments", bson.M{"user_id": user["_id"]}, nil))
+		comments := 0
+		for _, image := range images {
+			image_id := image["_id"].(primitive.ObjectID)
+			comments += len(utils.ReadAll(ctrl.Client, "worldskills", "comments", bson.M{"image_id": image_id}, nil))
+		}
+		user["total_comment_count"] = comments
 	}
 
 	order_by := c.Query("order_by")
