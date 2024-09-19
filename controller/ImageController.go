@@ -124,12 +124,13 @@ func (ctrl *Controller) PutImage(c *gin.Context) {
 	access_token := c.GetHeader("X-Authorization")
 	user := utils.Read(ctrl.Client, "worldskills", "users", bson.M{"access_token": access_token})
 
+	request := utils.GetRequestData(c)
 	// 檢查使用者是否存在
 	if user == nil {
 		response.Bad(c, "MSG_INVALID_ACCESS_TOKEN")
 		return
 	}
-
+	log.Println(request)
 	// 檢查圖片是否存在
 	image_id, _ := primitive.ObjectIDFromHex(c.Param("image_id"))
 	image := utils.Read(ctrl.Client, "worldskills", "images", bson.M{"_id": image_id})
@@ -147,14 +148,14 @@ func (ctrl *Controller) PutImage(c *gin.Context) {
 	// 驗證資料型態
 	var pass_changes = []map[string]string{}
 	for _, value := range []string{"title", "description"} {
-		if c.PostForm(value) == "" {
+		if request[value] == "" {
 			continue
 		}
-		if reflect.TypeOf(c.PostForm(value)).String() != image_type_map[value] {
+		if reflect.TypeOf(request[value]).String() != image_type_map[value] {
 			response.Bad(c, "MSG_WRONG_DATA_TYPE")
 			return
 		}
-		pass_changes = append(pass_changes, map[string]string{value: c.PostForm(value)})
+		pass_changes = append(pass_changes, map[string]string{value: request[value].(string)})
 	}
 
 	// 更新圖片資料
@@ -195,7 +196,7 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	order_type := map[string]int{
 		"asc":  1,
 		"desc": -1,
-	}[c.PostForm("order_type")]
+	}[c.Query("order_type")]
 	if order_type == 0 {
 		order_type = -1
 	}
@@ -209,19 +210,19 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	}
 
 	var order_by string
-	if order_by_map[c.PostForm("order_by")] == "" {
+	if order_by_map[c.Query("order_by")] == "" {
 		order_by = "created_at"
 	} else {
-		order_by = order_by_map[c.PostForm("order_by")]
+		order_by = order_by_map[c.Query("order_by")]
 	}
 
 	// page, page_size
 	var page int
 	var page_size int
-	if page = utils.String2Int(c.PostForm("page")); page == 0 {
+	if page = utils.String2Int(c.Query("page")); page == 0 {
 		page = 1
 	}
-	if page_size := utils.String2Int(c.PostForm("page_size")); page_size == 0 {
+	if page_size := utils.String2Int(c.Query("page_size")); page_size == 0 {
 		page_size = 10
 	}
 
@@ -231,8 +232,8 @@ func (ctrl *Controller) Search(c *gin.Context) {
 	}
 
 	// 關鍵字搜尋(如果有)
-	if keyword := c.PostForm("keywords"); keyword != "" {
-		regex := bson.M{"$regex": ".*" + c.PostForm("keywords") + ".*"}
+	if keyword := c.Query("keyword"); keyword != "" {
+		regex := bson.M{"$regex": ".*" + c.Query("keyword") + ".*"}
 		filter["$or"] = []bson.M{
 			{"title": regex},
 			{"description": regex},
