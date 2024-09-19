@@ -68,6 +68,7 @@ func main() {
 		user := api.Group("/user")
 		{
 			user.GET("/:user_id/image", ctrl.GetUserImages) // API 6
+			user.GET("/popular", ctrl.GetPopularUsers)      // API 15
 		}
 	}
 

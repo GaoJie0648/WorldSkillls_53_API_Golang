@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -186,9 +187,43 @@ func (ctrl *Controller) GetUserImages(c *gin.Context) {
 
 // 取得受歡迎的使用者
 func (ctrl *Controller) GetPopularUsers(c *gin.Context) {
-	limitStr := c.PostForm("limit")
-	limit, err := strconv.Atoi(limitStr)
+	users := utils.ReadAll(ctrl.Client, "worldskills", "users", bson.M{}, nil)
+	for _, user := range users {
+		user["image_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user["_id"], "deleted_at": ""}, nil))
+		user["upload_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "images", bson.M{"user_id": user["_id"], "deleted_at": "", "updated_at": bson.M{"$ne": ""}}, nil))
+		user["total_comment_count"] = len(utils.ReadAll(ctrl.Client, "worldskills", "comments", bson.M{"user_id": user["_id"]}, nil))
+	}
+
+	order_by := c.Query("order_by")
+	if order_by == "" {
+		order_by = "upload_count"
+	}
+
+	sort.Slice(users, func(i, j int) bool {
+		return users[i][order_by].(int) > users[j][order_by].(int)
+	})
+
+	limit_str := c.Query("limit")
+	limit, err := strconv.Atoi(limit_str)
 	if err != nil || limit <= 0 {
 		limit = 10
 	}
+
+	if len(users) > limit {
+		users = users[:limit]
+	}
+
+	data_map := []map[string]interface{}{}
+	for _, user := range users {
+		tmp := user
+		resource.UserResource(c, &user)
+		data := map[string]interface{}{
+			"user":                user,
+			"image_count":         tmp["image_count"],
+			"upload_count":        tmp["upload_count"],
+			"total_comment_count": tmp["total_comment_count"],
+		}
+		data_map = append(data_map, data)
+	}
+	response.Ok(c, data_map)
 }
